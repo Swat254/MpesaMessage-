@@ -1,0 +1,52 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 700px;
+  background: #fff;
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #2c3e50;
+}
+
+.messages {
+  margin-top: 20px;
+}
+
+.message {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  background: #fafafa;
+}
+
+.message p {
+  margin: 5px 0;
+}
+
+.message .time {
+  font-size: 0.8em;
+  color: #666;
+  text-align: right;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}

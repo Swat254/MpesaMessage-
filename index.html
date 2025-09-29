@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Safari Capital - Messages</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>📩 Incoming Messages</h1>
+    <div id="messages" class="messages"></div>
+  </div>
+
+  <script>
+    // 🔑 Supabase credentials
+    const SUPABASE_URL = "https://wzdodbpfdvmsbtwecdvk.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6ZG9kYnBmZHZtc2J0d2VjZHZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNTI0MDAsImV4cCI6MjA3NDYyODQwMH0.HC4XXKA9rqTDq9tGiWuhwqdNtMvvjaL6qvs1RkjGrds";
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Fetch messages from DB
+    async function loadMessages() {
+      const { data, error } = await supabaseClient
+        .from("messages")   // 👈 table name
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        document.getElementById("messages").innerHTML = `<p class="error">Error: ${error.message}</p>`;
+        return;
+      }
+
+      const container = document.getElementById("messages");
+      container.innerHTML = data.map(msg => `
+        <div class="message">
+          <p><strong>From:</strong> ${msg.sender}</p>
+          <p><strong>Text:</strong> ${msg.body}</p>
+          <p class="time">${new Date(msg.created_at).toLocaleString()}</p>
+        </div>
+      `).join("");
+    }
+
+    // Realtime subscription
+    supabaseClient
+      .channel("messages-channel")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, payload => {
+        loadMessages();
+      })
+      .subscribe();
+
+    loadMessages();
+  </script>
+</body>
+</html>
